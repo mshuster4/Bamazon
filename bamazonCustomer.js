@@ -12,6 +12,7 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
 });
 
+
 connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id" + connection.threadId);
@@ -27,6 +28,53 @@ function printAllproducts() {
         }
 
         console.log("-----------------------------------");
+    });
 
+    askQuestions();
+
+}
+
+function askQuestions() {
+    inquirer
+    .prompt ([
+        {
+            name: "itemId",
+            type: "input",
+            message: "Which product id would you like to buy?",
+            validate: function(value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+
+                return false;
+            }
+        },
+        {
+            name: "unitNumber",
+            type: "input",
+            message: "How many units?",
+            validate: function(value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+    
+    ]).then(function(answer){
+        var itemNumber = answer.itemId;
+        var unitNumber = answer.unitNumber;
+
+        var query = "SELECT * FROM products WHERE ?";
+        connection.query(query, { id: itemNumber }, function(err, res){
+            for (var i = 0; i < res.length; i++) {
+                console.log("Product id: " + res[i].id + "\n" + "Product name: " + res[i].product_name);
+            }
+
+            updateStock(itemNumber, unitNumber);
+
+        });
+    
     });
 }
