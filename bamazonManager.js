@@ -122,6 +122,8 @@ function addProduct() {
                 function(err, res) {
                     console.log(res.affectedRows + " product inserted \n");
                 }
+
+                 promptManager();
             );
 
     });

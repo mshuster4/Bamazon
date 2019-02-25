@@ -72,6 +72,10 @@ function askQuestions() {
 
                 if (res[i].stock_quantity > unitNumber) {
 
+                    var totalPrice = res[i].price * unitNumber;
+
+                    console.log("You total is: " + "$" + totalPrice); 
+
                     var stockUpdate = res[i].stock_quantity - unitNumber;
                     
                     console.log("New stock number: " + stockUpdate)
@@ -112,6 +116,6 @@ function askQuestions() {
             }
         );
 
-        console.log(query.sql)
+       printAllproducts(); 
     }
 }
