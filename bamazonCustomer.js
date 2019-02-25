@@ -70,11 +70,49 @@ function askQuestions() {
         connection.query(query, { id: itemNumber }, function(err, res){
             for (var i = 0; i < res.length; i++) {
                 console.log("Product id: " + res[i].id + "\n" + "Product name: " + res[i].product_name);
+
+                if (res[i].stock_quantity > unitNumber) {
+
+                    var stockUpdate = res[i].stock_quantity - unitNumber;
+                    
+                    console.log("New stock number: " + stockUpdate)
+
+                    updateStock(stockUpdate, itemNumber);
+                }
+
+                else {
+
+                    console.log("insufficient funds!")
+
+                }
+            
             }
 
-            updateStock(itemNumber, unitNumber);
 
         });
     
     });
+
+
+    function updateStock(number, id) {
+        console.log("Updating Bamazon stock")
+        var query = connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+                {
+                    stock_quantity: number
+                },
+                {
+                    id: id
+                }
+            ],
+            function(err, res) {
+
+                console.log(res.affectedRows + " products updated...\n");
+    
+            }
+        );
+
+        console.log(query.sql)
+    }
 }
