@@ -25,7 +25,8 @@ function printAllproducts() {
         for (var i = 0; i < res.length; i++) {
             console.log("Item ID: " + res[i].id + " || " + "Product Name: " + res[i].product_name + " || " 
                         + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
-                        + " || " + "Quantity: " + res[i].stock_quantity);
+                        + " || " + "Quantity: " + res[i].stock_quantity
+                        + " || " + "Product Sales: " + res[i].product_sales + "\n\n");
         }
 
         askQuestions();
@@ -68,24 +69,22 @@ function askQuestions() {
         var query = "SELECT * FROM products WHERE ?";
         connection.query(query, { id: itemNumber }, function(err, res){
             for (var i = 0; i < res.length; i++) {
-                console.log("Product id: " + res[i].id + "\n" + "Product name: " + res[i].product_name);
+                console.log("\n\n" + "Product id: " + res[i].id + "\n" + "Product name: " + res[i].product_name + "\n\n");
 
                 if (res[i].stock_quantity > unitNumber) {
 
                     var totalPrice = res[i].price * unitNumber;
 
-                    console.log("You total is: " + "$" + totalPrice); 
+                    var productSales = res[i].product_sales + totalPrice;
 
                     var stockUpdate = res[i].stock_quantity - unitNumber;
                     
-                    console.log("New stock number: " + stockUpdate)
-
-                    updateStock(stockUpdate, itemNumber);
+                    updateStock(stockUpdate, itemNumber, totalPrice, productSales);
                 }
 
                 else {
 
-                    console.log("insufficient funds!")
+                    console.log("insufficient stock!")
 
                 }
             
@@ -97,25 +96,30 @@ function askQuestions() {
     });
 
 
-    function updateStock(number, id) {
+    function updateStock(number, id, price, sales) {
         console.log("Updating Bamazon stock")
         var query = connection.query(
             "UPDATE products SET ? WHERE ?",
             [
                 {
-                    stock_quantity: number
+                    stock_quantity: number,
+                    product_sales: sales
                 },
                 {
-                    id: id
+                    id: id,
                 }
             ],
             function(err, res) {
 
                 console.log(res.affectedRows + " products updated...\n");
-    
-            }
-        );
 
-       printAllproducts(); 
+                console.log("New stock number: " + number);
+
+                console.log("Your total is cost is: " + "$" + price);
+
+
+            }
+            
+        );
     }
 }
