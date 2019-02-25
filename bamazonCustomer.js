@@ -15,22 +15,21 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    console.log("connected as id" + connection.threadId);
+    console.log("Welcome to Bamazon!");
     printAllproducts();
+
 });
 
 function printAllproducts() {
     connection.query("SELECT * FROM products", function(err, res){
         for (var i = 0; i < res.length; i++) {
-            console.log(res[i].id + " | " + res[i].product_name + " | " 
-                        + res[i].department_name + " | " + res[i].price
-                        + " | " + res[i].stock_quantity);
+            console.log("Item ID: " + res[i].id + " || " + "Product Name: " + res[i].product_name + " || " 
+                        + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
+                        + " || " + "Quantity: " + res[i].stock_quantity);
         }
 
-        console.log("-----------------------------------");
+        askQuestions();
     });
-
-    askQuestions();
 
 }
 
