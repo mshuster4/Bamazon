@@ -1,5 +1,8 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
+
+
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -44,22 +47,24 @@ function promptSupervisor() {
 
 function viewProductSales() {
 
-    console.log("Printing Departments...");
-
     var query = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales, (SUM(products.product_sales) - departments.over_head_costs) "
     query += "AS total_profit FROM products INNER JOIN departments WHERE departments.department_name = products.department_name "
     query += "GROUP BY departments.department_id, products.department_name, departments.over_head_costs ORDER BY department_id";
 
     connection.query(query, function(err, res){
 
+        table = new Table({head: ['Department ID', 'Department Name', 'Over Head Costs', 'Product Sales', "Total Profit"], 
+                   style: {head:[], border:[], 
+                   'padding-left':1, 'padding-right': 1 }})
+
+
         for (var i = 0; i < res.length; i++) {
 
-            console.log("Department ID: " + res[i].department_id + " || " + "Department Name: " + res[i].department_name + " || " +
-                        "Over Head Costs: " + res[i].over_head_costs + " || " + "Product Sales: " + res[i].product_sales + " || " + 
-                        "Total Profit: " + res[i].total_profit);
-        
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
         }
 
+        console.log(table.toString() + "\n\n");
+        
         promptSupervisor();
 
     });
