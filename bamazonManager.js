@@ -50,7 +50,7 @@ function promptManager() {
 function viewProducts() {
     connection.query("SELECT * FROM products", function(err, res){
         for (var i = 0; i < res.length; i++) {
-            console.log("Item ID: " + res[i].id + " || " + "Product Name: " + res[i].product_name + " || " 
+            console.log("Item ID: " + res[i].product_id + " || " + "Product Name: " + res[i].product_name + " || " 
                         + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
                         + " || " + "Quantity: " + res[i].stock_quantity);
         }
@@ -66,14 +66,14 @@ function viewLowInventory() {
     var query = "SELECT * FROM products WHERE stock_quantity BETWEEN ? AND ?"
     connection.query(query, [0, 5], function(err, res){
         for (var i = 0; i < res.length; i++) {
-             console.log("Item ID: " + res[i].id + " || " + "Product Name: " + res[i].product_name + " || " 
+             console.log("Item ID: " + res[i].product_id + " || " + "Product Name: " + res[i].product_name + " || " 
                         + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
                         + " || " + "Quantity: " + res[i].stock_quantity);
         }
 
         promptManager();
 
-    })
+    });
    
 
 }
@@ -120,12 +120,15 @@ function addProduct() {
                     stock_quantity: newQuantity
                 },
                 function(err, res) {
-                    console.log(res.affectedRows + " product inserted \n");
-                }
+                
+                console.log(res.affectedRows + " product inserted \n");
 
                  promptManager();
-            );
 
+
+                }
+            );
+            
     });
 
 }

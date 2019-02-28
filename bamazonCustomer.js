@@ -23,7 +23,7 @@ connection.connect(function(err) {
 function printAllproducts() {
     connection.query("SELECT * FROM products", function(err, res){
         for (var i = 0; i < res.length; i++) {
-            console.log("Item ID: " + res[i].id + " || " + "Product Name: " + res[i].product_name + " || " 
+            console.log("Item ID: " + res[i].product_id + " || " + "Product Name: " + res[i].product_name + " || " 
                         + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
                         + " || " + "Quantity: " + res[i].stock_quantity
                         + " || " + "Product Sales: " + res[i].product_sales + "\n\n");
