@@ -28,7 +28,8 @@ function promptManager() {
         choices: [
             "View products for sale",
             "View low inventory",
-            "Add new product"
+            "Add new product",
+            "Exit"
         ]
     })
     .then(function(answer) {
@@ -43,6 +44,10 @@ function promptManager() {
             
             case "Add new product":
                 addProduct();
+                break;
+            case "Exit":
+                console.log("Goodbye");
+                connection.end();
                 break;
         }
     });
@@ -139,7 +144,29 @@ function stockPrompt() {
         }
     
     ]).then(function(answer){
-        
+        var productId = name.itemId;
+        var productQuantity = name.unitNumber;
+
+        console.log("Stocking producting...\n");
+
+        var query = connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+                {
+                    stock_quantity: productQuantity
+                },
+                {
+                    product_id: productId
+                }
+            ],
+            function(err, res) {
+                console.log(res.affectRows + " product stocked! \n");
+
+                promptManager();
+            }
+
+        );
+
     });
 }
 
@@ -198,7 +225,6 @@ function addProduct() {
     });
 
 }
-
 
 
 

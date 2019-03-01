@@ -16,15 +16,15 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
-    console.log("Welcome to Bamazon!");
-    printAllproducts();
+    console.log("\n **WELCOME TO BAMAZON** \n");
+    printAllProducts();
 
 });
 
-function printAllproducts() {
+function printAllProducts() {
     connection.query("SELECT * FROM products", function(err, res){
 
-        table = new Table({head: ['Item ID', 'Product Name', 'Department', 'Price', 'Quantity', "Product Sales"], 
+        table = new Table({head: ['Item ID', 'Product Name', 'Department', 'Price', 'Quantity', 'Product Sales'], 
                    style: {head:[], border:[], 
                    'padding-left':1, 'padding-right': 1 }})
 
@@ -78,7 +78,7 @@ function askQuestions() {
             for (var i = 0; i < res.length; i++) {
                 console.log("\n\n" + "Product id: " + res[i].product_id + "\n" + "Product name: " + res[i].product_name + "\n\n");
 
-                if (res[i].stock_quantity > unitNumber) {
+                if (res[i].stock_quantity > 0)  {
 
                     var totalPrice = res[i].price * unitNumber;
 
@@ -91,8 +91,11 @@ function askQuestions() {
 
                 else {
 
-                    console.log("insufficient stock!");
+                    console.log("\n Insufficient stock! \n");
 
+                    buyAgain();
+
+                 
                 }
             
             }
@@ -103,30 +106,48 @@ function askQuestions() {
     });
 
 
-    function updateStock(number, id, price, sales) {
-        console.log("Updating Bamazon stock")
-        var query = connection.query(
-            "UPDATE products SET ? WHERE ?",
-            [
-                {
-                    stock_quantity: number,
-                    product_sales: sales
-                },
-                {
-                    product_id: id,
-                }
-            ],
+function updateStock(number, id, price, sales) {
+    var query = connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+            {
+                stock_quantity: number,
+                product_sales: sales
+            },
+            {
+                product_id: id,
+            }
+        ],
             function(err, res) {
 
-                console.log(res.affectedRows + " products updated...\n");
+        
+                console.log("Your total is cost is: " + "$" + price + "\n");
 
-                console.log("New stock number: " + number);
-
-                console.log("Your total is cost is: " + "$" + price);
-
+                buyAgain();
 
             }
             
         );
     }
+}
+
+function buyAgain() {
+     inquirer
+    .prompt([
+        {
+            name: "buyAgain",
+            type: "confirm",
+            message: "Would you like to buy another product?"
+        }
+    ]).then(function(answer){
+        if (answer.buyAgain == true) {
+            printAllProducts();
+        }
+        else {
+            console.log("\n Goodbye! \n"); 
+            connection.end();
+        }
+
+    })
+
 }
