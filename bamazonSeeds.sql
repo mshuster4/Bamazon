@@ -52,7 +52,7 @@ INSERT INTO products (product_name, department_name, price, stock_quantity, prod
 VALUES ("World Map", "Office Products", 15.00, 3, 45.00);
 
 INSERT INTO products (product_name, department_name, price, stock_quantity, product_sales)
-VALUES ("Ipod Shuffle", "Electronics", 0.00, 0, 0.00);
+VALUES ("Ipod Shuffle", "Electronics", 100.00, 0, 0.00);
 
 
 
@@ -76,3 +76,4 @@ VALUES ("Home & Kitchen", 50000.00);
 
 SELECT * FROM products; 
 select * from departments; 
+

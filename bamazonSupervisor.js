@@ -28,7 +28,8 @@ function promptSupervisor() {
         message: "What would you like to do?",
         choices: [
             "View Product Sales by Department",
-            "Create New Department"
+            "Create New Department",
+            "Exit"
         ]
     })
     .then(function(answer) {
@@ -40,26 +41,30 @@ function promptSupervisor() {
             case "Create New Department":
                 createNewDepartment();
                 break;
+
+            case "Exit":
+                console.log("\n Goodbye! \n");
+                connection.end();
         }
     });
 }
 
 function viewProductSales() {
 
-    var query = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales, (SUM(products.product_sales) - departments.over_head_costs) "
-    query += "AS total_profit FROM products INNER JOIN departments WHERE departments.department_id = products.product_id "
-    query += "GROUP BY departments.department_id, products.department_name, departments.over_head_costs ORDER BY department_id";
+    var query = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS total_sales, (SUM(products.product_sales) - departments.over_head_costs) "
+    query += "AS total_profit FROM products INNER JOIN departments WHERE departments.department_name = products.department_name "
+    query += "GROUP BY departments.department_id, departments.department_name, departments.over_head_costs ORDER BY department_id";
 
     connection.query(query, function(err, res){
 
         table = new Table({head: ['Department ID', 'Department Name', 'Over Head Costs', 'Product Sales', "Total Profit"], 
                    style: {head:[], border:[], 
-                   'padding-left':1, 'padding-right': 1 }})
+                   'padding-left':1, 'padding-right': 1 }});
 
 
         for (var i = 0; i < res.length; i++) {
 
-            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].total_sales, res[i].total_profit]);
         }
 
         console.log(table.toString() + "\n\n");
@@ -69,6 +74,7 @@ function viewProductSales() {
     });
 
 }
+
 
 function createNewDepartment() {
     inquirer.prompt([
@@ -93,7 +99,7 @@ function createNewDepartment() {
             "INSERT INTO departments SET ?", 
             {
                 department_name: newName,
-                over_head_costs: newCost
+                over_head_costs: newCost,
             },
             function(err, res) {
 

@@ -46,7 +46,7 @@ function promptManager() {
                 addProduct();
                 break;
             case "Exit":
-                console.log("Goodbye");
+                console.log("\n Goodbye! \n");
                 connection.end();
                 break;
         }
@@ -54,20 +54,21 @@ function promptManager() {
 }
 
 function viewProducts() {
+
     connection.query("SELECT * FROM products", function(err, res){
 
-        table = new Table({head: ['Department ID', 'Department Name', 'Over Head Costs', 'Product Sales', "Total Profit"], 
-                   style: {head:[], border:[], 
-                   'padding-left':1, 'padding-right': 1 }})
-            
-        for (var i = 0; i < res.length; i++) {
-           
-            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
-        }
+            table = new Table({head: ['Item ID', 'Product Name', 'Department', 'Price', 'Quantity', 'Product Sales'], 
+                    style: {head:[], border:[], 
+                    'padding-left':1, 'padding-right': 1 }})
 
-        console.log(table.toString() + "\n\n");
+            for (var i = 0; i < res.length; i++) {
+                
+                table.push([res[i].product_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity, res[i].product_sales]);
+            }
 
-        promptManager();
+            console.log(table.toString() + "\n\n");
+
+            promptManager();
 
     });
 
@@ -144,10 +145,10 @@ function stockPrompt() {
         }
     
     ]).then(function(answer){
-        var productId = name.itemId;
-        var productQuantity = name.unitNumber;
+        var productId = answer.itemId;
+        var productQuantity = answer.unitNumber;
 
-        console.log("Stocking producting...\n");
+        console.log("\n Stocking products...\n");
 
         var query = connection.query(
             "UPDATE products SET ? WHERE ?",
@@ -160,7 +161,7 @@ function stockPrompt() {
                 }
             ],
             function(err, res) {
-                console.log(res.affectRows + " product stocked! \n");
+                console.log("\n" + res.affectedRows + " product stocked! \n");
 
                 promptManager();
             }
@@ -197,7 +198,7 @@ function addProduct() {
         }
     ]).then(function(answer){
 
-        console.log("Adding new product...");
+        console.log("\n Adding new product...\n");
 
         var newName = answer.productName;
         var newDepartment = answer.departmentName;
@@ -214,7 +215,8 @@ function addProduct() {
                 },
                 function(err, res) {
                 
-                console.log(res.affectedRows + " product added \n");
+                console.log("\n" + 
+                res.affectedRows + " product added \n");
 
                  promptManager();
 
