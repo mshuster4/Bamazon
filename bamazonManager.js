@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -49,11 +50,17 @@ function promptManager() {
 
 function viewProducts() {
     connection.query("SELECT * FROM products", function(err, res){
+
+        table = new Table({head: ['Department ID', 'Department Name', 'Over Head Costs', 'Product Sales', "Total Profit"], 
+                   style: {head:[], border:[], 
+                   'padding-left':1, 'padding-right': 1 }})
+            
         for (var i = 0; i < res.length; i++) {
-            console.log("Item ID: " + res[i].product_id + " || " + "Product Name: " + res[i].product_name + " || " 
-                        + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
-                        + " || " + "Quantity: " + res[i].stock_quantity);
+           
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].product_sales, res[i].total_profit]);
         }
+
+        console.log(table.toString() + "\n\n");
 
         promptManager();
 
@@ -65,18 +72,28 @@ function viewProducts() {
 function viewLowInventory() {
     var query = "SELECT * FROM products WHERE stock_quantity BETWEEN ? AND ?"
     connection.query(query, [0, 5], function(err, res){
+
+        table = new Table({head: ['Item ID', 'Product Name', 'Department', 'Price', 'Quantity', "Product Sales"], 
+                   style: {head:[], border:[], 
+                   'padding-left':1, 'padding-right': 1 }})
+
         for (var i = 0; i < res.length; i++) {
-             console.log("Item ID: " + res[i].product_id + " || " + "Product Name: " + res[i].product_name + " || " 
-                        + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
-                        + " || " + "Quantity: " + res[i].stock_quantity);
+            
+            table.push([res[i].product_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity, res[i].product_sales]);
         }
 
-        promptManager();
+        console.log(table.toString() + "\n\n");
+        
+        stockProduct();
 
     });
    
+}
+
+function stockProduct() {
 
 }
+
 
 function addProduct() {
     inquirer
@@ -84,7 +101,7 @@ function addProduct() {
         {
             name: "productName",
             type: "input",
-            message: "What is the name of the product?"
+            message: "What is the name of this new product?"
         },
         {
             name: "departmentName",
@@ -104,7 +121,7 @@ function addProduct() {
         }
     ]).then(function(answer){
 
-        console.log("Adding new product...")
+        console.log("Adding new product...");
 
         var newName = answer.productName;
         var newDepartment = answer.departmentName;
@@ -121,7 +138,7 @@ function addProduct() {
                 },
                 function(err, res) {
                 
-                console.log(res.affectedRows + " product inserted \n");
+                console.log(res.affectedRows + " product added \n");
 
                  promptManager();
 

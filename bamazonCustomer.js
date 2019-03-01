@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -22,14 +23,20 @@ connection.connect(function(err) {
 
 function printAllproducts() {
     connection.query("SELECT * FROM products", function(err, res){
+
+        table = new Table({head: ['Item ID', 'Product Name', 'Department', 'Price', 'Quantity', "Product Sales"], 
+                   style: {head:[], border:[], 
+                   'padding-left':1, 'padding-right': 1 }})
+
         for (var i = 0; i < res.length; i++) {
-            console.log("Item ID: " + res[i].product_id + " || " + "Product Name: " + res[i].product_name + " || " 
-                        + "Department: " + res[i].department_name + " ||  " + "Price: " + res[i].price
-                        + " || " + "Quantity: " + res[i].stock_quantity
-                        + " || " + "Product Sales: " + res[i].product_sales + "\n\n");
+            
+            table.push([res[i].product_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity, res[i].product_sales]);
         }
 
+        console.log(table.toString() + "\n\n");
+
         askQuestions();
+
     });
 
 }
@@ -40,7 +47,7 @@ function askQuestions() {
         {
             name: "itemId",
             type: "input",
-            message: "Which product id would you like to buy?",
+            message: "Which item would you like to buy? (enter ID number)",
             validate: function(value) {
                 if (isNaN(value) === false) {
                     return true;
@@ -67,9 +74,9 @@ function askQuestions() {
         var unitNumber = answer.unitNumber;
 
         var query = "SELECT * FROM products WHERE ?";
-        connection.query(query, { id: itemNumber }, function(err, res){
+        connection.query(query, { product_id: itemNumber }, function(err, res){
             for (var i = 0; i < res.length; i++) {
-                console.log("\n\n" + "Product id: " + res[i].id + "\n" + "Product name: " + res[i].product_name + "\n\n");
+                console.log("\n\n" + "Product id: " + res[i].product_id + "\n" + "Product name: " + res[i].product_name + "\n\n");
 
                 if (res[i].stock_quantity > unitNumber) {
 
@@ -84,7 +91,7 @@ function askQuestions() {
 
                 else {
 
-                    console.log("insufficient stock!")
+                    console.log("insufficient stock!");
 
                 }
             
@@ -106,7 +113,7 @@ function askQuestions() {
                     product_sales: sales
                 },
                 {
-                    id: id,
+                    product_id: id,
                 }
             ],
             function(err, res) {

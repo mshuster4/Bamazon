@@ -3,7 +3,6 @@ var inquirer = require("inquirer");
 var Table = require("cli-table");
 
 
-
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -48,7 +47,7 @@ function promptSupervisor() {
 function viewProductSales() {
 
     var query = "SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales, (SUM(products.product_sales) - departments.over_head_costs) "
-    query += "AS total_profit FROM products INNER JOIN departments WHERE departments.department_name = products.department_name "
+    query += "AS total_profit FROM products INNER JOIN departments WHERE departments.department_id = products.product_id "
     query += "GROUP BY departments.department_id, products.department_name, departments.over_head_costs ORDER BY department_id";
 
     connection.query(query, function(err, res){
@@ -72,5 +71,37 @@ function viewProductSales() {
 }
 
 function createNewDepartment() {
-    console.log("here")
+    inquirer.prompt([
+        {
+            name: "departmentName",
+            type: "input",
+            message: "What is the name of this new department?"
+        },
+        {
+            name: "cost",
+            type: "input",
+            message: "What is this department's over head cost?"
+        }
+    ]).then(function(answer){
+
+        console.log("Adding new department...");
+
+        var newName = answer.departmentName;
+        var newCost = answer.cost;
+
+        var query = connection.query(
+            "INSERT INTO departments SET ?", 
+            {
+                department_name: newName,
+                over_head_costs: newCost
+            },
+            function(err, res) {
+
+                console.log(res.affectedRows + " department added \n");
+
+                promptSupervisor();
+            }
+
+        );
+    });
 }
