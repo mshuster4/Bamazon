@@ -91,7 +91,56 @@ function viewLowInventory() {
 }
 
 function stockProduct() {
+    inquirer
+    .prompt([
+        {
+            name: "stockProduct",
+            type: "confirm",
+            message: "Would you like to stock any low products?"
+        }
+    ]).then(function(answer){
+        if (answer.stockProduct == true) {
+            stockPrompt();
+        }
+        else {
+            promptManager(); 
+        }
 
+    })
+
+}
+
+function stockPrompt() {
+    inquirer
+    .prompt ([
+        {
+            name: "itemId",
+            type: "input",
+            message: "Which item would you like to stock? (enter ID number)",
+            validate: function(value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+
+                return false;
+            }
+        },
+        {
+            name: "unitNumber",
+            type: "input",
+            message: "How many units?",
+            validate: function(value) {
+                if (isNaN(value) === false) {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+    
+    ]).then(function(answer){
+        
+    });
 }
 
 
