@@ -79,6 +79,7 @@ function viewLowInventory() {
     var query = "SELECT * FROM products WHERE stock_quantity BETWEEN ? AND ?"
     connection.query(query, [0, 5], function(err, res){
 
+
         table = new Table({head: ['Item ID', 'Product Name', 'Department', 'Price', 'Quantity', "Product Sales"], 
                    style: {head:[], border:[], 
                    'padding-left':1, 'padding-right': 1 }})
@@ -106,6 +107,7 @@ function stockProduct() {
         }
     ]).then(function(answer){
         if (answer.stockProduct == true) {
+
             stockPrompt();
         }
         else {
@@ -146,29 +148,50 @@ function stockPrompt() {
     
     ]).then(function(answer){
         var productId = answer.itemId;
-        var productQuantity = answer.unitNumber;
+        var addStock = parseInt(answer.unitNumber);
+        var currStock;
 
         console.log("\n Stocking products...\n");
+        
+        var query = "SELECT * FROM products WHERE ?";
+        connection.query(query, { product_id: productId }, function(err, res){
+            for (var i = 0; i < res.length; i++) {
+                
+                currStock = res[i].stock_quantity + addStock;
 
-        var query = connection.query(
-            "UPDATE products SET ? WHERE ?",
-            [
-                {
-                    stock_quantity: productQuantity
-                },
-                {
-                    product_id: productId
-                }
-            ],
-            function(err, res) {
-                console.log("\n" + res.affectedRows + " product stocked! \n");
 
-                promptManager();
             }
 
-        );
+            console.log(currStock);
 
+            updateStock(productId, currStock);
+
+
+        });
     });
+
+}
+
+
+function updateStock(id, number) {
+    var query = connection.query(
+        "UPDATE products SET ? WHERE ?",[
+            {
+                stock_quantity: number
+            },
+            {
+                product_id: id
+            }
+        ],
+            function(err, res) {
+
+                console.log("\n" + res.affectedRows + " products stocked! \n");
+
+                promptManager();
+
+        }
+
+    );
 }
 
 

@@ -105,6 +105,8 @@ function askQuestions() {
     
     });
 
+    
+
 
 function updateStock(number, id, price, sales) {
     var query = connection.query(
