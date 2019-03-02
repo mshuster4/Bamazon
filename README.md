@@ -23,9 +23,6 @@ Insufficient Stock Example
     - Add products to the storefront
 - Instantly updates product display with manager updates.
 
-Manager Storefront View Example
-![Gif Manager Storefront](https:/raw.githubusercontent.com/mshuster4/Bamazon/master/media/manager_flow.gif)
-
 Manager View Low Inventory Example
 ![Gif Manager Stock](https://raw.githubusercontent.com/mshuster4/Bamazon/master/media/manager_stock.gif)
 
