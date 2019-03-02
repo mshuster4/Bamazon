@@ -6,7 +6,7 @@ MySql and Node.js storefront with customer, manager and supervisor views.
 ### Customer View
 
 - Allows customers to purchase products 
-- Instantly updates a product's quantity after purchase
+- Instantly updates a product's stock quantity after purchase
 - Notifies customer when the selected product's stock is insufficent 
 
 Customer Sale Example
