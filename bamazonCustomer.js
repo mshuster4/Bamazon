@@ -78,7 +78,7 @@ function askQuestions() {
             for (var i = 0; i < res.length; i++) {
                 console.log("\n\n" + "Product id: " + res[i].product_id + "\n" + "Product name: " + res[i].product_name + "\n\n");
 
-                if (res[i].stock_quantity > 0)  {
+                if (res[i].stock_quantity - unitNumber > 0)  {
 
                     var totalPrice = res[i].price * unitNumber;
 
